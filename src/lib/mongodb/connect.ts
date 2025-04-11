@@ -1,77 +1,44 @@
 // src/lib/mongodb/connect.ts
 import mongoose from 'mongoose';
 
-// Ensure MONGODB_URI is defined or throw an error early
+// Get the MongoDB URI from environment variables
 const MONGODB_URI = process.env.MONGODB_URI;
 
+// Define the cached connection type correctly
+interface CachedConnection {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+// Use the type from global.d.ts
+let cached: CachedConnection = (global as any).mongoose || { conn: null, promise: null };
+
 if (!MONGODB_URI) {
-  throw new Error('MONGODB_URI must be defined in environment variables');
+  throw new Error('Please define the MONGODB_URI environment variable');
 }
 
-// Define an interface for the global mongoose state
-interface MongooseCache {
-  conn: mongoose.Connection | null;
-  promise: Promise<mongoose.Mongoose> | null;
-}
-
-// Extend the global object with our mongoose cache
-declare global {
-  var mongooseCache: MongooseCache | undefined;
-}
-
-// Use global variable or initialize
-const globalMongoose = global.mongooseCache || { conn: null, promise: null };
-
-if (!global.mongooseCache) {
-  global.mongooseCache = globalMongoose;
-}
-
-export async function connectMongoDB() {
-  // Force non-null assertion since we've already checked MONGODB_URI
-  const mongoUri = MONGODB_URI!;
-
-  // If already connected, return the connection
-  if (globalMongoose.conn) {
-    return globalMongoose.conn;
+export async function connectToDatabase() {
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  // If no existing promise, create a new connection
-  if (!globalMongoose.promise) {
-    const opts: mongoose.ConnectOptions = {
-      serverSelectionTimeoutMS: 5000,
-      retryWrites: true,
-      w: 'majority'
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
     };
 
-    globalMongoose.promise = mongoose.connect(mongoUri, opts).then((mongooseInstance) => {
-      return mongooseInstance;
-    });
+    // Use the non-null assertion operator to tell TypeScript that MONGODB_URI is definitely defined
+    cached.promise = mongoose.connect(MONGODB_URI!, opts);
   }
 
   try {
-    // Wait for the connection promise and store the connection
-    const mongooseInstance = await globalMongoose.promise;
-    globalMongoose.conn = mongooseInstance.connection;
-    
-    console.log('Connected to MongoDB');
-    return globalMongoose.conn;
+    cached.conn = await cached.promise;
+    return cached.conn;
   } catch (error) {
-    // Reset the promise on error
-    globalMongoose.promise = null;
-    console.error('MongoDB connection error:', error);
+    cached.promise = null;
     throw error;
   }
 }
 
-// Utility function to handle database operations safely
-export async function runDatabaseOperation<T>(
-  operation: () => Promise<T>
-): Promise<T | null> {
-  try {
-    await connectMongoDB();
-    return await operation();
-  } catch (error) {
-    console.error('Database operation failed:', error);
-    return null;
-  }
-}
+// Update the global cache
+(global as any).mongoose = cached;

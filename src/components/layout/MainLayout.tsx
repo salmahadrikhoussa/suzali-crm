@@ -1,29 +1,36 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Sidebar from '../dashboard/Sidebar';
 import Topbar from '../dashboard/Topbar';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+export default function MainLayout({ children }: MainLayoutProps) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // Redirect to login if not authenticated
+  if (status === 'loading') {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (status === 'unauthenticated') {
+    router.push('/auth/login');
+    return null;
+  }
+
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <Sidebar />
-      
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Topbar */}
+      <div className="flex flex-col flex-1 overflow-hidden">
         <Topbar />
-        
-        {/* Main content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4">
+        <main className="flex-1 overflow-y-auto p-4">
           {children}
         </main>
       </div>
     </div>
   );
-};
-
-export default MainLayout;
+}

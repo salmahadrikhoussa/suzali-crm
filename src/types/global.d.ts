@@ -2,8 +2,9 @@
 import mongoose from 'mongoose';
 
 declare global {
+  // This matches the structure we're using in connect.ts
   var mongoose: {
-    conn: mongoose.Connection | null;
+    conn: typeof mongoose | null;
     promise: Promise<typeof mongoose> | null;
   } | undefined;
 }

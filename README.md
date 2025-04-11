@@ -1,2 +1,2 @@
 # suzali-crm
-A nextJs crm 
+A NextJs crm 

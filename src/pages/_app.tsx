@@ -1,11 +1,16 @@
+import { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
-import type { AppProps } from 'next/app';
-import '../styles/globals.css'; // Make sure this path is correct for your project
+import { ProfileProvider } from '../contexts/ProfileContext';
+import '../styles/globals.css';
 
-export default function App({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <SessionProvider session={pageProps.session}>
-      <Component {...pageProps} />
+    <SessionProvider session={session}>
+      <ProfileProvider>
+        <Component {...pageProps} />
+      </ProfileProvider>
     </SessionProvider>
   );
 }
+
+export default MyApp;

@@ -1,7 +1,4 @@
-A set up guide to run the project :)
-
-
-This guide will help you set up and run this project locally using VSCODE.
+This guide will help you set up and run this project locally :)
 
 ---
 

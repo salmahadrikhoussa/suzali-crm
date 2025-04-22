@@ -1,6 +1,7 @@
-# suzali-crm# 🛠️ Project Setup Guide
+A set up guide to run the project :)
 
-This guide will help you set up and run this project locally using **Visual Studio Code**.
+
+This guide will help you set up and run this project locally using VSCODE.
 
 ---
 

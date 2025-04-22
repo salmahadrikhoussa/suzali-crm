@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { connectToDatabase } from '../lib/mongoose/connect';
 
 export interface IUser {
   name: string;
@@ -11,9 +12,17 @@ export interface IUser {
   updatedAt: Date;
 }
 
+// Remove the immediate connection call - mongoose will connect when needed
+// We'll ensure the connection happens in the files that use this model
+
 const UserSchema = new Schema<IUser>({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  email: { 
+    type: String, 
+    required: true, 
+    unique: true,
+    lowercase: true // Ensure emails are stored lowercase
+  },
   password: { type: String, required: true },
   role: { 
     type: String, 

@@ -18,7 +18,7 @@ export default function Login() {
 
     const result = await signIn('credentials', {
       redirect: false,
-      email,
+      email: email.toLowerCase(), // Modify this line to convert email to lowercase
       password,
     });
 
@@ -30,7 +30,7 @@ export default function Login() {
       router.push('/dashboard');
     }
   };
-
+  
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">

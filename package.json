@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@types/mongoose": "^5.11.96",
     "bcryptjs": "^3.0.2",
     "mongodb": "^6.16.0",
     "mongoose": "^8.13.2",

@@ -28,7 +28,6 @@ export default function Topbar() {
     const path = router.pathname;
     if (path.includes('/dashboard')) return 'Dashboard';
     if (path.includes('/companies')) return 'Companies';
-    if (path.includes('/deals')) return 'Deals';
     if (path.includes('/contacts')) return 'Contacts';
     if (path.includes('/reports')) return 'Reports';
     if (path.includes('/settings')) return 'Settings';
@@ -85,9 +84,6 @@ export default function Topbar() {
                 <Link href="/companies/new" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                   Add Company
                 </Link>
-                <Link href="/deals/new" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  Add Deal
-                </Link>
                 <Link href="/contacts/new" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                   Add Contact
                 </Link>
@@ -129,9 +125,9 @@ export default function Topbar() {
                 </div>
                 <div className="max-h-64 overflow-y-auto">
                   <div className="px-4 py-2 hover:bg-gray-50 border-b">
-                    <p className="text-sm font-medium">New deal created</p>
-                    <p className="text-xs text-gray-500">Software License with Acme Inc</p>
-                    <p className="text-xs text-gray-400">10 minutes ago</p>
+                    <p className="text-sm font-medium">New contact added</p>
+                    <p className="text-xs text-gray-500">John Smith from TechCorp</p>
+                    <p className="text-xs text-gray-400">Yesterday</p>
                   </div>
                   <div className="px-4 py-2 hover:bg-gray-50 border-b">
                     <p className="text-sm font-medium">Task reminder</p>

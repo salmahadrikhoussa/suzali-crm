@@ -12,7 +12,7 @@ interface ProfileData {
   phone: string;
   timezone: string;
   language: string;
-  profileImage?: string | null;  // Add this line
+  profileImage?: string | null;
 }
 
 export default function ProfileSettings() {
@@ -39,9 +39,13 @@ export default function ProfileSettings() {
       // Fetch user profile data from the server
       const fetchUserProfile = async () => {
         try {
+          setIsSaving(true);
           const response = await fetch('/api/user/profile');
+          
           if (response.ok) {
             const data = await response.json();
+            
+            // Set form data with returned profile or defaults from session
             setFormData({
               firstName: data.firstName || session?.user?.name?.split(' ')[0] || '',
               lastName: data.lastName || session?.user?.name?.split(' ')[1] || '',
@@ -51,16 +55,34 @@ export default function ProfileSettings() {
               timezone: data.timezone || 'UTC',
               language: data.language || 'en'
             });
+            
+            // Update profile image if it exists in the response
+            if (data.profileImage) {
+              updateProfileImage(data.profileImage);
+            }
+          } else {
+            // If profile doesn't exist yet, use data from session
+            setFormData({
+              firstName: session?.user?.name?.split(' ')[0] || '',
+              lastName: session?.user?.name?.split(' ')[1] || '',
+              email: session?.user?.email || '',
+              jobTitle: '',
+              phone: '',
+              timezone: 'UTC',
+              language: 'en'
+            });
           }
         } catch (error) {
           console.error('Error fetching user profile:', error);
           toast.error('Failed to load profile data');
+        } finally {
+          setIsSaving(false);
         }
       };
       
       fetchUserProfile();
     }
-  }, [session]);
+  }, [session, updateProfileImage]);
 
   // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -129,7 +151,7 @@ export default function ProfileSettings() {
       // Include the profile image in form data
       const dataToSubmit = {
         ...formData,
-        profileImage: profileImage // This comes from the context
+        profileImage // This comes from the context
       };
       
       // Send data to the server
@@ -148,6 +170,15 @@ export default function ProfileSettings() {
       
       // Success notification
       toast.success('Profile updated successfully');
+      
+      // Update the session user's name (if possible)
+      if (session?.user) {
+        const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+        if (session.user.name !== fullName) {
+          // In a real app, you would update the session
+          console.log(`Name would update from ${session.user.name} to ${fullName}`);
+        }
+      }
     } catch (error) {
       console.error('Error saving profile:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to update profile');

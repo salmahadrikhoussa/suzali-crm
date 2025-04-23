@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import MainLayout from '../components/layout/MainLayout';
-import { ChartBarIcon, BuildingOffice2Icon, CurrencyDollarIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, BuildingOffice2Icon, UserGroupIcon } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
 
 export default function Dashboard() {
   const { data: session } = useSession();
   const [stats, setStats] = useState({
     companies: 0,
-    deals: 0,
-    activeDeals: 0,
-    totalValue: 0,
+    contacts: 0,
+    tasks: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -19,19 +18,13 @@ export default function Dashboard() {
         // In a real application, you would fetch these from your API
         // For now, we'll use dummy data
         // const companiesRes = await fetch('/api/companies/stats');
-        // const dealsRes = await fetch('/api/deals/stats');
+        // const contactsRes = await fetch('/api/contacts/stats');
         
-        // if (!companiesRes.ok || !dealsRes.ok) throw new Error('Failed to fetch stats');
-        
-        // const companiesData = await companiesRes.json();
-        // const dealsData = await dealsRes.json();
-
         // Dummy data
         setStats({
           companies: 12,
-          deals: 24,
-          activeDeals: 15,
-          totalValue: 67500,
+          contacts: 24,
+          tasks: 15,
         });
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
@@ -51,30 +44,24 @@ export default function Dashboard() {
       color: 'bg-blue-500',
     },
     {
-      title: 'Total Deals',
-      value: stats.deals,
-      icon: CurrencyDollarIcon,
+      title: 'Total Contacts',
+      value: stats.contacts,
+      icon: UserGroupIcon,
       color: 'bg-green-500',
     },
     {
-      title: 'Active Deals',
-      value: stats.activeDeals,
+      title: 'Active Tasks',
+      value: stats.tasks,
       icon: ChartBarIcon,
       color: 'bg-purple-500',
     },
-    {
-      title: 'Deal Value',
-      value: `$${stats.totalValue.toLocaleString()}`,
-      icon: CurrencyDollarIcon,
-      color: 'bg-yellow-500',
-    },
   ];
 
-  const recentDeals = [
-    { id: 1, title: 'Software Implementation', company: 'Acme Inc', stage: 'proposal', value: 15000 },
-    { id: 2, title: 'Consulting Services', company: 'TechCorp', stage: 'negotiation', value: 8500 },
-    { id: 3, title: 'Product License', company: 'Globex', stage: 'qualified', value: 12000 },
-    { id: 4, title: 'Support Package', company: 'Wayne Enterprises', stage: 'closed-won', value: 5000 },
+  const recentTasks = [
+    { id: 1, title: 'Follow-up call', company: 'Acme Inc', dueDate: '2025-04-28', status: 'pending' },
+    { id: 2, title: 'Prepare proposal', company: 'TechCorp', dueDate: '2025-04-30', status: 'in-progress' },
+    { id: 3, title: 'Client meeting', company: 'Globex', dueDate: '2025-05-02', status: 'pending' },
+    { id: 4, title: 'Update contact info', company: 'Wayne Enterprises', dueDate: '2025-05-05', status: 'completed' },
   ];
 
   return (
@@ -91,7 +78,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {statCards.map((card, index) => (
                 <div key={index} className="bg-white rounded-lg shadow p-6">
                   <div className="flex items-center">
@@ -110,27 +97,37 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-lg shadow">
                 <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-lg font-medium">Recent Deals</h3>
+                  <h3 className="text-lg font-medium">Recent Activities</h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deal</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stage</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Related To</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {recentDeals.map((deal) => (
-                        <tr key={deal.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{deal.title}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{deal.company}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{deal.stage}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${deal.value.toLocaleString()}</td>
-                        </tr>
-                      ))}
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Added new contact</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John Smith</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Contact</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10 min ago</td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Updated company info</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Acme Corp</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Company</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1 hour ago</td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Uploaded document</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">TechCorp Proposal</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">File</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Yesterday</td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -140,10 +137,35 @@ export default function Dashboard() {
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h3 className="text-lg font-medium">Upcoming Tasks</h3>
                 </div>
-                <div className="p-6">
-                  <div className="flex items-center justify-center h-48 text-gray-400">
-                    <p>No upcoming tasks</p>
-                  </div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {recentTasks.map((task) => (
+                        <tr key={task.id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{task.title}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{task.company}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(task.dueDate).toLocaleDateString()}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                              ${task.status === 'completed' ? 'bg-green-100 text-green-800' : 
+                                task.status === 'in-progress' ? 'bg-yellow-100 text-yellow-800' : 
+                                'bg-blue-100 text-blue-800'}`}>
+                              {task.status === 'in-progress' ? 'In Progress' : 
+                                task.status === 'completed' ? 'Completed' : 'Pending'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>

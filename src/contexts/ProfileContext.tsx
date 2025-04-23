@@ -71,7 +71,7 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
     }
   }, [session, status]);
 
-  // Function to update profile image and save to localStorage and API
+  // Function to update profile image and save to localStorage
   const updateProfileImage = async (image: string | null) => {
     setProfileImage(image);
     
@@ -82,9 +82,6 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
       if (image) {
         // Save to localStorage with user-specific key
         localStorage.setItem(storageKey, image);
-        
-        // Save to API (note: the actual API call is handled in the profile form submit)
-        // This only updates the UI state; the ProfileSettings component handles API update
       } else {
         localStorage.removeItem(storageKey);
       }

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectToDatabase } from '../../../lib/mongodb/connect';
-import User from '../../../models/User';
+import { connectToDatabase } from '../../../lib/mongoose/connect';
+import { default as User } from '../../../models/User';
 import bcrypt from 'bcryptjs';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../../lib/auth/authOptions';

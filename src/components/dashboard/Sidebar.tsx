@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import {
   HomeIcon,
   BuildingOffice2Icon,
-  CurrencyDollarIcon,
   UserGroupIcon,
   ChartBarIcon,
   Cog6ToothIcon,
@@ -18,7 +17,6 @@ import { useProfile } from '../../contexts/ProfileContext';
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Companies', href: '/companies', icon: BuildingOffice2Icon },
-  { name: 'Deals', href: '/deals', icon: CurrencyDollarIcon },
   { name: 'Contacts', href: '/contacts', icon: UserGroupIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];

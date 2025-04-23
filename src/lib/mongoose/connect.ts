@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 // Get the MongoDB URI from environment variables
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -16,6 +15,7 @@ declare global {
 
 // Check if the MongoDB URI exists
 if (!MONGODB_URI) {
+  console.error('MONGODB_URI is not defined in environment variables!');
   throw new Error('Please define the MONGODB_URI environment variable');
 }
 
@@ -29,8 +29,11 @@ if (!global.mongoose) {
 
 // Connection function
 export async function connectToDatabase() {
+  console.log('Connection function called, URI:', MONGODB_URI?.substring(0, 20) + '...');
+  
   // If we have a connection already, return it
   if (cached.conn) {
+    console.log('Using existing connection');
     return cached.conn;
   }
 
@@ -43,16 +46,26 @@ export async function connectToDatabase() {
       serverSelectionTimeoutMS: 30000,
     };
 
-    console.log('Connecting to MongoDB...');
+    console.log('Creating new MongoDB connection...');
     // Use non-null assertion (!) since we've checked it above
     cached.promise = mongoose.connect(MONGODB_URI!, opts);
+  } else {
+    console.log('Using existing connection promise');
   }
 
   try {
     // Store the connection
     const mongooseInstance = await cached.promise;
     cached.conn = mongooseInstance;
-    console.log('Connected to MongoDB successfully');
+    
+    // Check if connection and db exist before accessing properties
+    if (mongooseInstance.connection && mongooseInstance.connection.db) {
+      console.log('Connected to MongoDB successfully, database:', 
+        mongooseInstance.connection.db.databaseName);
+    } else {
+      console.log('Connected to MongoDB successfully, but database info not available');
+    }
+    
     return mongooseInstance;
   } catch (err) {
     console.error('Error connecting to MongoDB:', err);

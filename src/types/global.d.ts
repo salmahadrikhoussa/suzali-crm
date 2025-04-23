@@ -16,6 +16,12 @@ declare module 'next-auth' {
   interface User {
     id?: string;
     role?: string;
+    firstName?: string;
+    lastName?: string;
+    jobTitle?: string;
+    timezone?: string;
+    language?: string;
+    profileImage?: string;
   }
 
   interface Session {
@@ -25,6 +31,12 @@ declare module 'next-auth' {
       email?: string | null;
       role?: string;
       image?: string | null;
+      firstName?: string;
+      lastName?: string;
+      jobTitle?: string;
+      timezone?: string;
+      language?: string;
+      profileImage?: string;
     }
   }
 }
@@ -33,6 +45,12 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id?: string;
     role?: string;
+    firstName?: string;
+    lastName?: string;
+    jobTitle?: string;
+    timezone?: string;
+    language?: string;
+    profileImage?: string;
   }
 }
 
